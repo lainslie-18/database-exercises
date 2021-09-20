@@ -29,10 +29,15 @@ select first_name, last_name from employees
 where last_name like 'e%' or last_name like '%e';
 -- 30,723 employees
 
+select first_name, last_name from employees
+where last_name like '%e' and not last_name like 'e%';
+-- 23,393 employees
+
 -- 7. Find all current or previous employees employees whose last name starts and ends with 'E'. Enter a comment with the number of employees whose last name starts and ends with E. How many employees' last names end with E, regardless of whether they start with E?
 select first_name, last_name from employees
 where last_name like 'e%' and last_name like '%e';
 -- 899 employees
+
 select first_name, last_name from employees
 where last_name like '%e';
 -- 24,292 employees
