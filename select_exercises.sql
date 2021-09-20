@@ -35,7 +35,7 @@ select release_date from albums where name = 'Sgt. Pepper\'s Lonely Hearts Club 
 select genre from albums where name = "Nevermind";
 
 -- d. Which albums were released in the 1990s
-select name from albums where release_ate between 1990 and 1999;
+select name from albums where release_date between 1990 and 1999;
 
 -- e. Which albums had less than 20 million certified sales
 select name from albums where sales < 20.0;
