@@ -36,6 +36,13 @@ select gender, count(*) from employees
 where first_name in ('Irena', 'Vidya', 'Maya')
 group by gender;
 
+select first_name, sum(gender = 'M') as 'Male', sum(gender = 'F') as 'Female'
+from employees
+where first_name in ('Irena', 'Vidya', 'Maya')
+group by first_name;
+
+
+
 -- 8. Using your query that generates a username for all of the employees, generate a count employees for each unique username. Are there any duplicate usernames? BONUS: How many duplicate usernames are there?
 select lower(concat(substr(first_name,1,1),
 		substr(last_name,1,4),
