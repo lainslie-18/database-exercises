@@ -30,15 +30,15 @@ order by role_count desc;
 use employees;
 
 -- 2. Using the example in the Associative Table Joins section as a guide, write a query that shows each department along with the name of the current manager for that department.
-select departments.dept_name, concat(employees.first_name, ' ', employees.last_name) as full_name
+select dept_name, concat(first_name, ' ', last_name) as full_name
 from employees
-join dept_manager on dept_manager.emp_no = employees.emp_no
-join departments on departments.dept_no = dept_manager.dept_no
+join dept_manager using(emp_no)
+join departments using(dept_no)
 where dept_manager.to_date > curdate();
 
 -- 3. Find the name of all departments currently managed by women.
-select departments.dept_name as department, 
-concat(employees.first_name, ' ', employees.last_name) as full_name,
+select dept_name as department, 
+concat(first_name, ' ', last_name) as full_name,
 gender
 from employees
 join dept_manager using(emp_no)
@@ -47,16 +47,16 @@ where dept_manager.to_date > curdate()
 and employees.gender = 'F';
 
 -- 4. Find the current titles of employees currently working in the Customer Service department.
-select titles.title as Title, count(title) as Count
+select title as Title, count(title) as Count
 from titles
 join current_dept_emp using(emp_no)
 join departments using(dept_no)
 where departments.dept_name = 'Customer Service'
 and titles.to_date > curdate()
-group by titles.title;
+group by title;
 
 -- 5. Find the current salary of all current managers.
-select departments.dept_name, concat(employees.first_name, ' ', employees.last_name) as full_name, salaries.salary
+select dept_name, concat(first_name, ' ', last_name) as full_name, salary
 from salaries
 join employees using(emp_no)
 right join dept_manager using(emp_no)
@@ -66,12 +66,12 @@ and salaries.to_date > curdate()
 order by salary desc;
 
 -- 6. Find the number of current employees in each department.
-select departments.dept_no, departments.dept_name, count(*) as num_employees
+select dept_no, dept_name, count(*) as num_employees
 from departments
 join current_dept_emp using(dept_no)
 where current_dept_emp.to_date > curdate()
-group by departments.dept_name
-order by departments.dept_no;
+group by dept_name
+order by dept_no;
 
 -- 7. Which department has the highest average salary? Hint: Use current not historic information.
 select dept_name, round(avg(salary),2) as avg_salary
@@ -84,29 +84,29 @@ order by avg_salary desc
 limit 1;
 
 -- 8. Who is the highest paid employee in the Marketing department?
-select concat(employees.first_name, ' ', employees.last_name) as full_name
+select concat(first_name, ' ', last_name) as full_name
 from employees
 join salaries using(emp_no)
 join current_dept_emp using(emp_no)
 join departments using(dept_no)
 where salaries.to_date > curdate()
-and departments.dept_name = 'Marketing'
-order by salaries.salary desc
+and dept_name = 'Marketing'
+order by salary desc
 limit 1;
 
 -- 9. Which current department manager has the highest salary?
-select concat(employees.first_name, ' ', employees.last_name) as full_name, salaries.salary, departments.dept_name
+select concat(first_name, ' ', last_name) as full_name, salary, dept_name
 from employees
 join salaries using(emp_no)
 join dept_manager using(emp_no)
 join departments using(dept_no)
 where dept_manager.to_date > curdate()
 and salaries.to_date > curdate()
-order by salaries.salary desc
+order by salary desc
 limit 1;
 
 -- 10. Bonus Find the names of all current employees, their department name, and their current manager's name.
-select a.concat(employees.first_name, ' ', employees.last_name) as employee_name, 
+select a.concat(first_name, ' ', last_name) as employee_name, 
 b.concat(employees.first_name, ' ', employees.last_name) as manager_name,
 departments.dept_name
 from employees a, employees b
@@ -141,6 +141,21 @@ select * from dept_emp limit 5;
 show tables;
 
 -- 11. Bonus Who is the highest paid employee within each department.
+# dept_name, employee, salary
+select dept_name, concat(first_name, ' ', last_name) as name, salary
+from employees
+join salaries using(emp_no)
+join dept_emp using(emp_no)
+join departments using(dept_no)
+where salary in 
+(select max(salary)
+from salaries
+join employees using(emp_no)
+join dept_emp using(emp_no)
+join departments using(dept_no)
+where salaries.to_date > now()
+and dept_emp.to_date > now()
+group by dept_name);
 
 -- Bonus, Bonus Determine the average salary for each department. Use all salary information and round your results.
 select dept_name, round(avg(salary)) as avg_salary
