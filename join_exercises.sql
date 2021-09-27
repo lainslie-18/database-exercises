@@ -106,39 +106,16 @@ order by salary desc
 limit 1;
 
 -- 10. Bonus Find the names of all current employees, their department name, and their current manager's name.
-select a.concat(first_name, ' ', last_name) as employee_name, 
-b.concat(employees.first_name, ' ', employees.last_name) as manager_name,
+select concat(employees.first_name, ' ', employees.last_name) as employee_name, 
+concat(mngrs.first_name, ' ', mngrs.last_name) as manager_name,
 departments.dept_name
-from employees a, employees b
-join current_dept_emp using(emp_no)
-join departments using(dept_no)
+from employees as mngrs
 join dept_manager using(emp_no)
-where a;
-
-where dept_manager.dept_no = current_dept_emp.dept_no 
-and dept_manager.to_date > curdate())
-from employees a, employees b
-where current_dept_emp.to_date > curdate();
-
-
-SELECT A.CustomerName AS CustomerName1, B.CustomerName AS CustomerName2, A.City
-FROM Customers A, Customers B
-WHERE A.CustomerID <> B.CustomerID
-AND A.City = B.City
-ORDER BY A.City;
-
-SELECT column_name(s)
-FROM table1 T1, table1 T2
-WHERE condition;
-
-select * from salaries limit 5;         # emp_no, salary, from_date, to_date
-select * from titles limit 5;           # emp_no, title, from_date, to_date
-select * from departments limit 5;      # dept_no, dept_name
-select * from current_dept_emp limit 5; # emp_no, dept_no, from_date, to_date
-select * from employees limit 5;        # emp_no, birth_date, first_name, last_name, gender, hire_date
-select * from dept_manager limit 5;     # emp_no, dept_no, from_date, to_date
-select * from dept_emp limit 5;
-show tables;
+join departments using(dept_no)
+join dept_emp using(dept_no)
+join employees on dept_emp.emp_no = employees.emp_no
+where dept_emp.to_date > curdate()
+and dept_manager.to_date > curdate();
 
 -- 11. Bonus Who is the highest paid employee within each department.
 # dept_name, employee, salary
