@@ -55,6 +55,8 @@ alter table payments_table
 rename column amount2 to amount;
 
 describe payments_table;
+drop table payments_table;
+
 
 -- 3. Find out how the current average pay in each department compares to the overall, historical average pay. In order to make the comparison easier, you should use the Z-score for salaries. In terms of salary, what is the best department right now to work for? The worst?
 -- the best department to work for is Sales and the worst is Human Resources
