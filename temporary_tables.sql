@@ -31,8 +31,52 @@ join dept_emp using(emp_no)
 join departments using(dept_no)
 where dept_emp.to_date > now();
 
+use sakila;
+show tables;
+
 -- 2. Create a temporary table based on the payment table from the sakila database.
-select * from employees_with_departments;
+create temporary table hopper_1549.payments_table as
+select * from payment;
+
+use hopper_1549;
+select * from payments_table;
+
 -- Write the SQL necessary to transform the amount column such that it is stored as an integer representing the number of cents of the payment. For example, 1.99 should become 199.
+alter table payments_table
+add amount2 int after amount;
+
+update payments_table
+set amount2 = amount * 100;
+
+alter table payments_table
+drop column amount;
+
+alter table payments_table
+rename column amount2 to amount;
+
+describe payments_table;
 
 -- 3. Find out how the current average pay in each department compares to the overall, historical average pay. In order to make the comparison easier, you should use the Z-score for salaries. In terms of salary, what is the best department right now to work for? The worst?
+-- the best department to work for is Sales and the worst is Human Resources
+use employees;
+
+create temporary table hopper_1549.pay_comparison as
+select dept_name, round(avg(salary),2) as avg_salary
+from salaries
+join dept_emp using(emp_no)
+join departments using(dept_no)
+where dept_emp.to_date > now()
+and salaries.to_date > now()
+group by dept_name;
+
+use hopper_1549;
+
+alter table pay_comparison
+add z_score dec(10,2);
+update pay_comparison
+set z_score = 
+(avg_salary - (select avg(salary) from employees.salaries)) / 
+(select std(salary) from employees.salaries);
+
+select * from pay_comparison
+order by z_score desc;
