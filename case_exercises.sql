@@ -8,12 +8,12 @@ from dept_emp;
 -- 2. Write a query that returns all employee names (previous and current), and a new column 'alpha_group' that returns 'A-H', 'I-Q', or 'R-Z' depending on the first letter of their last name.
 select first_name, last_name, 
 	case
-    when last_name regexp '[A-H]' THEN 'A-H'
-           when last_name regexp '[I-Q]' THEN 'I-Q'
-           when last_name regexp '[R-Z]' THEN 'R-Z'
+    when last_name regexp '^[A-H]' THEN 'A-H'
+           when last_name regexp '^[I-Q]' THEN 'I-Q'
+           when last_name regexp '^[R-Z]' THEN 'R-Z'
            end as alpha_group
 from employees
-order by last_name;
+order by last_name asc;
 
 -- 3. How many employees (current or previous) were born in each decade?
 select case
@@ -55,10 +55,3 @@ join salaries using(emp_no)
 where dept_emp.to_date > curdate()
 and salaries.to_date > curdate()
 group by dept_name;
-
-select * from departments; # dept_no, dept_name
-select * from dept_emp limit 5; # emp_no, dept_no, from_date, to_date
-select * from dept_manager limit 5; # emp_no, dept_no, from_date, to_date
-select * from employees order by emp_no; # emp_no, birth_date, first_name, last_name, gender, hire_date
-select * from salaries limit 5; # emp_no, salary, from_date, to_date
-select * from titles limit 5; # emp_no, title, from_date, to_date
